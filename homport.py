@@ -2,24 +2,13 @@
 Homport is a helper module to make manipulating nodes with HOM easier
 """
 
-import hou
-
-# TODO: add input cycling
-# try to add input to 0 index, go up until there is an open input
-# raise exception if no open inputs available
-def connectInput(self, node):
-  node.setInput(0, self)
-
-def connectOutput(self, node):
-  self.setInput(0, node)
+if not 'hou' in globals():
+    import hou
 
 # node >> node2 -- connects input of node2 to output of node
-#hou.Node.__rshift__ = connectInput
-
 # node << node2 -- connects input of node to output of node2
-#hou.Node.__lshift__ = connectOutput
 
-class ParmWrapper:
+class ParmWrapper(object):
     """
     TODO document
     """
@@ -40,7 +29,7 @@ class ParmWrapper:
         """
         pass
 
-class NodeWrapper:
+class NodeWrapper(object)::
     """
     TODO document
     """
@@ -84,7 +73,7 @@ class NodeWrapper:
         """
         try:
             node = NodeWrapper(object)
-        except NodeWrapError:
+        except NodeWrapError, e:
             raise NodeWrapError
         else:
             node.setFirstInput(self.node)
@@ -96,8 +85,8 @@ class NodeWrapper:
         """
         try:
             node = NodeWrapper(object)
-        except NodeWrapError:
-            raise NodeWrapError
+        except NodeWrapError, e:
+            raise e
         else:
             self.node.setFirstInput(node)
 
