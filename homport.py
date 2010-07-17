@@ -17,7 +17,7 @@ Installation Instructions:
     manually:
     git clone git://github.com/schworer/homport homport/
 
-    put this in 123.py in your ~/houdiniXX.X/scripts/ dir:
+    Then, put this in your 123.py or 456.py Houdini startup script:
         import homport
         homport.bootstrap()
 """
@@ -30,11 +30,11 @@ if not 'hou' in globals():
 def __wrap_node(*args, **kwargs):
     """
     This function is used to monkey patch the hou.node method in order to
-    allow the node to make the Homport module transparent to interactive
-    python shell users.
+    make the Homport module transparent to users. Once monkey patched,
+    hou.node will return a NodeWrap object.
     """
     node = hou.node(*args, **kwargs)
-    return NodeWrapper(node)
+    return NodeWrap(node)
 
 def bootstrap():
     """
@@ -43,7 +43,7 @@ def bootstrap():
     """
     hou.node = __wrap_node
 
-class ParmWrapper(object):
+class ParmWrap(object):
     """
     TODO document
     """
@@ -64,7 +64,7 @@ class ParmWrapper(object):
         """
         pass
 
-class NodeWrapper(object):
+class NodeWrap(object):
     """
     TODO document
     """
@@ -80,10 +80,10 @@ class NodeWrapper(object):
         """
         childNode = self.node.node(name)
         if not childNode:
-            childNode = NodeWrapper(childNode)
+            childNode = NodeWrap(childNode)
 
         parm = self.node.parm(name)
-        parm = ParmWrapper(parm)
+        parm = ParmWrap(parm)
         try:
             attribute = getattr(self.node, name)
         except AttributeError:
@@ -107,7 +107,7 @@ class NodeWrapper(object):
         connect node's output to node2's input 
         """
         try:
-            node = NodeWrapper(object)
+            node = NodeWrap(object)
         except NodeWrapError, e:
             raise NodeWrapError
         else:
@@ -119,7 +119,7 @@ class NodeWrapper(object):
         connect node's input to node2's output 
         """
         try:
-            node = NodeWrapper(object)
+            node = NodeWrap(object)
         except NodeWrapError, e:
             raise e
         else:
