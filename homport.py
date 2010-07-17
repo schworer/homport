@@ -33,7 +33,8 @@ def __wrap_node(*args, **kwargs):
     make the Homport module transparent to users. Once monkey patched,
     hou.node will return a NodeWrap object.
     """
-    node = hou.node(*args, **kwargs)
+    import pdb; pdb.set_trace()
+    node = hou.__node(*args, **kwargs)
     return NodeWrap(node)
 
 def bootstrap():
@@ -41,6 +42,12 @@ def bootstrap():
     Bootstrap the current session.
     @warning: This monkey patches the hou.node method.
     """
+
+    # stash the originial function away, we'll call it later
+    hou.__node = hou.node
+
+    __wrap_node.func_name = 'node'
+    __wrap_node.func_doc = hou.node.func_doc
     hou.node = __wrap_node
 
 class ParmWrap(object):
@@ -73,7 +80,6 @@ class NodeWrap(object):
         TODO document
         """
         self.node = node
-
     def __getattr__(self, name):
         """
         TODO document
@@ -124,4 +130,12 @@ class NodeWrap(object):
             raise e
         else:
             self.node.setFirstInput(node)
+
+    def __repr__(self):
+        """ """
+        return "<Node %s of type %s>" % (self.node.path(),
+                                         self.node.type().name())
+    def __str__(self):
+        """ calls through to the HOM Node's str function """
+        return str(self.node)
 
