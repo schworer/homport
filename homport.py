@@ -1,12 +1,47 @@
 """
-Homport is a helper module to make manipulating nodes with HOM easier
+Homport is a helper module to make manipulating nodes with HOM easier in
+an interactive Python session
+
+Connect nodes quickly:
+node >> node2 -- connects output of 'node' to first input of 'node2'
+
+Deal with parameters more easily:
+print node.tx does the same as:
+print node.parm('tx').eval()
+
+Installation Instructions:
+    You can use pip to install it:
+    pip install git://github.com/schworer/homport homport/
+
+    If you don't want to use pip, clone the repo and add it to your path
+    manually:
+    git clone git://github.com/schworer/homport homport/
+
+    put this in 123.py in your ~/houdiniXX.X/scripts/ dir:
+        import homport
+        homport.bootstrap()
 """
 
 if not 'hou' in globals():
+    # import houdini in this module. Ideally, hou should already be in
+    # globals, as homport is meant to be run inside a houdini session.
     import hou
 
-# node >> node2 -- connects input of node2 to output of node
-# node << node2 -- connects input of node to output of node2
+def __wrap_node(*args, **kwargs):
+    """
+    This function is used to monkey patch the hou.node method in order to
+    allow the node to make the Homport module transparent to interactive
+    python shell users.
+    """
+    node = hou.node(*args, **kwargs)
+    return NodeWrapper(node)
+
+def bootstrap():
+    """
+    Bootstrap the current session.
+    @warning: This monkey patches the hou.node method.
+    """
+    hou.node = __wrap_node
 
 class ParmWrapper(object):
     """
@@ -29,7 +64,7 @@ class ParmWrapper(object):
         """
         pass
 
-class NodeWrapper(object)::
+class NodeWrapper(object):
     """
     TODO document
     """
@@ -90,5 +125,3 @@ class NodeWrapper(object)::
         else:
             self.node.setFirstInput(node)
 
-root = NodeWrapper(hou.node('/'))
-obj = NodeWrapper(hou.node('/obj'))
