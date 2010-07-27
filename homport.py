@@ -4,6 +4,8 @@ an interactive Python session
 
 Connect nodes quickly:
 node >> node2 -- connects output of 'node' to first input of 'node2'
+node >> node2.input_two -- connects output of 'node' to the second input of
+                           'node2'
 
 Deal with parameters more easily:
 print node.tx does the same as:
@@ -80,6 +82,7 @@ class NodeWrap(object):
         TODO document
         """
         self.node = node
+
     def __getattr__(self, name):
         """
         TODO document
@@ -135,6 +138,7 @@ class NodeWrap(object):
         """ """
         return "<Node %s of type %s>" % (self.node.path(),
                                          self.node.type().name())
+
     def __str__(self):
         """ calls through to the HOM Node's str function """
         return str(self.node)
