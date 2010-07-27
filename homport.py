@@ -52,6 +52,9 @@ def bootstrap():
     __wrap_node.func_doc = hou.node.func_doc
     hou.node = __wrap_node
 
+class NodeWrapError(Exception):
+    pass
+
 class ParmWrap(object):
     """
     TODO document
