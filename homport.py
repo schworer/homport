@@ -29,16 +29,6 @@ if not 'hou' in globals():
     # globals, as homport is meant to be run inside a houdini session.
     import hou
 
-def __wrap_node(*args, **kwargs):
-    """
-    This function is used to monkey patch the hou.node method in order to
-    make the Homport module transparent to users. Once monkey patched,
-    hou.node will return a NodeWrap object.
-    """
-    import pdb; pdb.set_trace()
-    node = hou.__node(*args, **kwargs)
-    return NodeWrap(node)
-
 def bootstrap():
     """
     Bootstrap the current session.
@@ -47,6 +37,16 @@ def bootstrap():
 
     # stash the originial function away, we'll call it later
     hou.__node = hou.node
+
+    def __wrap_node(*args, **kwargs):
+        """
+        This function is used to monkey patch the hou.node method in order to
+        make the Homport module transparent to users. Once monkey patched,
+        hou.node will return a NodeWrap object.
+        """
+        import pdb; pdb.set_trace()
+        node = hou.__node(*args, **kwargs)
+        return NodeWrap(node)
 
     __wrap_node.func_name = 'node'
     __wrap_node.func_doc = hou.node.func_doc
