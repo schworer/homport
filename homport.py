@@ -38,7 +38,7 @@ def bootstrap():
     # stash the originial function away, we'll call it later
     hou.__node = hou.node
 
-    def __wrap_node(*args, **kwargs):
+    def _wrap_node(*args, **kwargs):
         """
         This function is used to monkey patch the hou.node method in order to
         make the Homport module transparent to users. Once monkey patched,
@@ -48,9 +48,9 @@ def bootstrap():
         node = hou.__node(*args, **kwargs)
         return NodeWrap(node)
 
-    __wrap_node.func_name = 'node'
-    __wrap_node.func_doc = hou.node.func_doc
-    hou.node = __wrap_node
+    _wrap_node.func_name = 'node'
+    _wrap_node.func_doc = hou.node.func_doc
+    hou.node = _wrap_node
 
 class NodeWrapError(Exception):
     pass
