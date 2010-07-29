@@ -102,7 +102,8 @@ class NodeWrap(object):
 
         attribs = [x for x in (childNode, parm, attribute) if x]
         if len(attribs) == 0:
-            msg = "Node object has no Node, parm or Attribute: %s" % name
+            msg = "Node object has no Node, parm or python attr called %s" \
+                % name
             raise AttributeError(msg)
 
         if len(attribs) > 1:
