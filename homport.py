@@ -35,7 +35,7 @@ def bootstrap():
     @warning: This monkey patches the hou.node method.
     """
 
-    # stash the originial function away, we'll call it later
+    # move the originial function out of the way, we'll call it later
     hou.__node = hou.node
 
     def _wrap_node(*args, **kwargs):
@@ -44,7 +44,6 @@ def bootstrap():
         make the Homport module transparent to users. Once monkey patched,
         hou.node will return a NodeWrap object.
         """
-        import pdb; pdb.set_trace()
         node = hou.__node(*args, **kwargs)
         return NodeWrap(node)
 
