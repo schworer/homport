@@ -89,6 +89,13 @@ class NodeWrap(object):
 
         self.node = node
 
+    def createNode(self, name):
+        """
+        Wraps the node created by hou.Node.createNode in a NodeWrap obj
+        """
+        node = self.node.createNode(name)
+        return NodeWrap(node)
+
     def __getattr__(self, name):
         """
         Easily get the children or parameters of the node without calling
