@@ -13,6 +13,10 @@ class NodeWrapTestCase(unittest.TestCase):
         hou.node('/obj').createNode('geo')
         self.assertEquals(hou.node('/obj/geo1').node, hou.node('/obj').geo1.node)
 
+    def testGetParm(self):
+        null = hou.node('/obj').createNode('null')
+        self.assertEquals(null.tx.parm, null.parm('tx'))
+
     def testRshift(self):
         geo = hou.node('/obj').createNode('geo')
         null = hou.node('/obj').createNode('null')
