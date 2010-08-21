@@ -159,12 +159,14 @@ class NodeWrap(object):
         node << node2
         connect node's input to node2's output 
         """
-        try:
-            node = NodeWrap(object)
-        except NodeWrapError, e:
-            raise e
+        if isinstance(object, NodeWrap):
+            node = object
         else:
-            self.node.setFirstInput(node)
+            try:
+                node = NodeWrap(object)
+            except NodeWrapError, e:
+                raise NodeWrapError
+        self.node.setFirstInput(node.node)
 
     def __repr__(self):
         """ """
