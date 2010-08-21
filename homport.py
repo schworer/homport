@@ -108,11 +108,11 @@ class NodeWrap(object):
             return getattr(self.node, name)
 
         childNode = self.node.node(name)
-        if not childNode:
+        if childNode:
             childNode = NodeWrap(childNode)
 
         parm = self.node.parm(name)
-        if not parm:
+        if parm:
             parm = ParmWrap(parm)
 
         try:
