@@ -84,12 +84,29 @@ class NodeWrap(object):
         """
         TODO document
         """
+        if not node:
+            raise NodeWrapError('Invalid node given.')
+
         self.node = node
 
     def __getattr__(self, name):
         """
-        TODO document
+        Easily get the children or parameters of the node without calling
+        extra methods on the node. A useful convenience function.
+
+        examples:
+            node = hou.node('/obj')
+            node.geo1 # will return hou.node('/obj/geo1')
+            node.tx # will return node.parm('tx')
+            node.createNode # will return node.createNode
         """
+
+        # if the attr we're looking for is a method on the hou.Node object
+        # return that first without going further.
+        # This might cause problems later, we'll see.
+        if name in dir(self.node):
+            return getattr(self.node, name)
+
         childNode = self.node.node(name)
         if not childNode:
             childNode = NodeWrap(childNode)
