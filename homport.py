@@ -22,6 +22,7 @@ Installation Instructions:
     Then, put this in your 123.py or 456.py Houdini startup script:
         import homport
         homport.bootstrap()
+    or, import it directly in the Python pane within Houdini.
 """
 
 if not 'hou' in globals():
@@ -94,7 +95,9 @@ class NodeWrap(object):
             childNode = NodeWrap(childNode)
 
         parm = self.node.parm(name)
-        parm = ParmWrap(parm)
+        if not parm:
+            parm = ParmWrap(parm)
+
         try:
             attribute = getattr(self.node, name)
         except AttributeError:
