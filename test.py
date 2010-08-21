@@ -13,5 +13,10 @@ class NodeWrapTestCase(unittest.TestCase):
         hou.node('/obj').createNode('geo')
         self.assertEquals(hou.node('/obj/geo1').node, hou.node('/obj').geo1.node)
 
+    def testConnection(self):
+        geo = hou.node('/obj').createNode('geo')
+        null = hou.node('/obj').createNode('null')
+        geo >> null
+
 if __name__ == "__main__":
     unittest.main()
