@@ -145,7 +145,6 @@ class NodeWrap(object):
         node >> node2
         connect node's output to node2's input 
         """
-        import pdb; pdb.set_trace()
         if isinstance(object, NodeWrap):
             node = object
         else:
