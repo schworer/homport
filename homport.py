@@ -12,7 +12,7 @@ print node.tx does the same as:
 print node.parm('tx').eval()
 
 Installation Instructions:
-    You can use pip to install it:
+    You will be able to use pip to install it (when I get around to it):
     pip install git://github.com/schworer/homport homport/
 
     If you don't want to use pip, clone the repo and add it to your path
@@ -145,12 +145,15 @@ class NodeWrap(object):
         node >> node2
         connect node's output to node2's input 
         """
-        try:
-            node = NodeWrap(object)
-        except NodeWrapError, e:
-            raise NodeWrapError
+        import pdb; pdb.set_trace()
+        if isinstance(object, NodeWrap):
+            node = object
         else:
-            node.setFirstInput(self.node)
+            try:
+                node = NodeWrap(object)
+            except NodeWrapError, e:
+                raise NodeWrapError
+        node.setFirstInput(self.node)
 
     def __lshift__(self, object):
         """
