@@ -27,5 +27,17 @@ class NodeWrapTestCase(unittest.TestCase):
         null = hou.node('/obj').createNode('null')
         geo << null
 
+class ParmWrapTestCase(unittest.TestCase):
+    def setUp(self):
+        self.geo1 = hou.node('/obj').createNode('geo')
+        self.geo2 = hou.node('/obj').createNode('geo')
+
+    def testParmsWrapped(self):
+        self.assertEquals(self.geo1.tx.parm, self.geo1.node.parm('tx'))
+
+    def testLinkParms(self):
+        self.geo1.tx >> self.geo2.tx
+        self.assertEquals(self.geo1.tx, self.geo2.tx)
+
 if __name__ == "__main__":
     unittest.main()
