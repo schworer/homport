@@ -88,7 +88,7 @@ class ParmWrap(object):
             raise AttributeError(msg)
 
     def __str__(self):
-        return self.parm.eval()
+        return str(self.parm.eval())
 
 class NodeWrap(object):
     """
@@ -121,6 +121,11 @@ class NodeWrap(object):
             node.tx # will return node.parm('tx')
             node.createNode # will return node.createNode
         """
+
+        inputs = ('input_one', 'input_two', 'input_three', 'input_four')
+        if name in inputs:
+            self.input_index = inputs.index(name)
+            return self
 
         # if the attr we're looking for is a method on the hou.Node object
         # return that first without going further.
@@ -166,7 +171,10 @@ class NodeWrap(object):
                 node = NodeWrap(object)
             except NodeWrapError, e:
                 raise NodeWrapError
-        node.setFirstInput(self.node)
+        if hasattr(node, 'input_index'):
+            node.setInput(node.input_index, self.node)
+        else:
+            node.setFirstInput(self.node)
 
     def __lshift__(self, object):
         """
