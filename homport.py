@@ -102,6 +102,7 @@ class NodeWrap(object):
             raise NodeWrapError('Invalid node given.')
 
         self.node = node
+        self.input_index = 0
 
     def createNode(self, name):
         """
@@ -171,10 +172,7 @@ class NodeWrap(object):
                 node = NodeWrap(object)
             except NodeWrapError, e:
                 raise NodeWrapError
-        if hasattr(node, 'input_index'):
-            node.setInput(node.input_index, self.node)
-        else:
-            node.setFirstInput(self.node)
+        node.setInput(node.input_index, self.node)
 
     def __lshift__(self, object):
         """
@@ -188,7 +186,7 @@ class NodeWrap(object):
                 node = NodeWrap(object)
             except NodeWrapError, e:
                 raise NodeWrapError
-        self.node.setFirstInput(node.node)
+        self.node.setInput(self.input_index, node.node)
 
     def __repr__(self):
         """ """
