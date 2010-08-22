@@ -77,6 +77,19 @@ class ParmWrap(object):
         """
         pass
 
+    def __getattr__(self, name):
+        """
+        TODO document
+        """
+        if name in dir(self.parm):
+            return getattr(self.parm, name)
+        else:
+            msg = 'ParmWrap object has no attribute %s' % name
+            raise AttributeError(msg)
+
+    def __str__(self):
+        return self.parm.eval()
+
 class NodeWrap(object):
     """
     TODO document
