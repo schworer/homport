@@ -36,7 +36,7 @@ def bootstrap():
     @warning: This monkey patches the hou.node method.
     """
 
-    # move the originial function out of the way, we'll call it later
+    # move the original function out of the way, we'll call it later
     hou.__node = hou.node
 
     def _wrap_node(*args, **kwargs):
