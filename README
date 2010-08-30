@@ -26,3 +26,5 @@ Installation Instructions:
         homport.bootstrap()
     or, import it directly in the Python pane within Houdini.
 
+I like unit tests, run them like so:
+    hython test.py
