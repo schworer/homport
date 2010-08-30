@@ -162,6 +162,24 @@ class NodeWrap(object):
         return attribs[0]
 
     def __setattr__(self, name, value):
+        """
+        This implementation of setattr enables setting of parameters using the
+        = (equals) operator. Usually, you'd set a parm value like this:
+            node.parm('tx').set(50)
+        With this implementation, we can do this:
+            node.tx = 50
+
+        @warning: this only works when the attr in question is a ParmWrap 
+        object on a NodeWrap object and not a standalone hou.Parm or 
+        ParmWrap object.
+
+        For example, it should be obvious that this won't work:
+            my_tx = node.tx
+            my_tx = 50
+        Or this:
+            tx = node.parm('tx')
+            tx = 50
+        """
         if name in ('node', 'input_index'):
             object.__setattr__(self, name, value)
         else:

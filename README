@@ -13,6 +13,9 @@ Deal with parameters more easily:
  * print node.tx does the same as:
  * print node.parm('tx').eval()
 
+Set values on Parms more easily:
+ * node.tx = 500
+
 Installation Instructions:
     You will be able to use pip to install it (when I get around to it):
     pip install git://github.com/schworer/homport homport/
