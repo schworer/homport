@@ -81,6 +81,7 @@ class ParmWrap(object):
         """
         TODO document
         """
+
         if name in dir(self.parm):
             return getattr(self.parm, name)
         else:
@@ -159,6 +160,16 @@ class NodeWrap(object):
             raise AttributeError(msg)
 
         return attribs[0]
+
+    def __setattr__(self, name, value):
+        if name in ('node', 'input_index'):
+            object.__setattr__(self, name, value)
+        else:
+            attr = self.__getattr__(name)
+            if isinstance(attr, ParmWrap):
+                attr.parm.set(value)
+            else:
+                object.__setattr__(self, attr, value)
 
     def __rshift__(self, object):
         """

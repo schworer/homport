@@ -42,6 +42,10 @@ class ParmWrapTestCase(unittest.TestCase):
     def testParmsWrapped(self):
         self.assertEquals(self.geo1.tx.parm, self.geo1.node.parm('tx'))
 
+    def testSetParm(self):
+        self.geo1.tx = 500
+        self.assertEquals(self.geo1.tx.eval(), 500)
+
     def testEvalParm(self):
         self.geo1.tx.set(500.0)
         self.assertEquals(self.geo1.tx.eval(), 500.0)
