@@ -217,6 +217,22 @@ class NodeWrap(object):
                 raise NodeWrapError
         self.node.setInput(self.input_index, node.node)
 
+    def __floordiv__(self, object):
+        """
+        Disconnect two nodes:
+        node = hou.node('/obj/geo1')
+        node2 = hou.node('/obj/geo2')
+        node >> node2 # connect them
+        node // node2 # disconnect them
+        """
+        # check object's input connections
+        node = object
+        conn = node.inputConnections()[node.input_index]
+        if not conn.inputNode() == self.node:
+            raise NodeWrapError('Input node is incorrect')
+        else:
+            node.setInput(node.input_index, None)
+
     def __repr__(self):
         """ """
         return "<Node %s of type %s>" % (self.node.path(),

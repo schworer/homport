@@ -27,6 +27,15 @@ class NodeWrapTestCase(unittest.TestCase):
         null = hou.node('/obj').createNode('null')
         geo << null
 
+    def testFloorDiv(self):
+        geo = hou.node('/obj').createNode('geo')
+        null = hou.node('/obj').createNode('null')
+        geo >> null
+        self.assertTrue(len(null.inputConnections()) == 1)
+
+        geo // null
+        self.assertTrue(len(null.inputConnections()) == 0)
+
     def testDefinedInputConn(self):
         geo = hou.node('/obj').createNode('geo')
         subnet = hou.node('/obj').createNode('subnet')
