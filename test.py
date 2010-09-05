@@ -65,7 +65,8 @@ class ParmWrapTestCase(unittest.TestCase):
 
     def testLinkParms(self):
         self.geo1.tx >> self.geo2.tx
-        self.assertEquals(self.geo1.tx, self.geo2.tx)
+        self.geo1.tx = 450.0
+        self.assertEquals(str(self.geo1.tx), str(self.geo2.tx))
 
 if __name__ == "__main__":
     unittest.main()

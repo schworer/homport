@@ -69,7 +69,11 @@ class ParmWrap(object):
         """
         node.tx >> node2.ty
         """
-        pass
+        cur_node = self.parm.node()
+        to_node = object.node()
+        rel_path = cur_node.relativePathTo(to_node)
+        rel_reference = 'ch(%s)' % rel_path
+        self.parm.setExpression(rel_reference)
 
     def __lshift__(self, object):
         """
