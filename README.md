@@ -5,29 +5,29 @@ an interactive Python session
 
 ## Usage
 ### Connect nodes quickly:
- * node >> node2 -- connects output of 'node' to first input of 'node2'
- * node >> node2.input_two -- connects output of 'node' to the second input of
-                           'node2'
+    # connects output of 'node' to first input of 'node2'
+    node >> node2
+    # connects output of 'node' to the second input of 'node2'
+    node >> node2.input_two
 
 ### Deal with parameters more easily:
- * print node.tx does the same as:
- * print node.parm('tx').eval()
-
-### Set values on Parms more easily:
- * node.tx = 500
+    # set parameters using assignment
+    node.tx = 500
+    # get values without calling eval()
+    print node.tx
 
 ## Installation Instructions:
-    You will be able to use pip to install it (when I get around to it):
+You will be able to use pip to install it (when I get around to it):
     pip install git://github.com/schworer/homport homport/
 
-    If you don't want to use pip, clone the repo and add it to your path
-    manually:
+If you don't want to use pip, clone the repo and add it to your path
+manually:
     git clone git://github.com/schworer/homport homport/
 
-    Then, put this in your 123.py or 456.py Houdini startup script:
-        import homport
-        homport.bootstrap()
-    or, import it directly in the Python pane within Houdini.
+Then, put this in your 123.py or 456.py Houdini startup script:
+    import homport
+    homport.bootstrap()
+or, import it directly in the Python pane within Houdini.
 
 ### I like unit tests, run them like so:
     hython test.py
