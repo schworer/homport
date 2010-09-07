@@ -1,22 +1,22 @@
-HOMport
-=======
+# homport
 
 Homport is a helper module to make manipulating nodes with HOM easier in
 an interactive Python session
 
-Connect nodes quickly:
+## Usage
+### Connect nodes quickly:
  * node >> node2 -- connects output of 'node' to first input of 'node2'
  * node >> node2.input_two -- connects output of 'node' to the second input of
                            'node2'
 
-Deal with parameters more easily:
+### Deal with parameters more easily:
  * print node.tx does the same as:
  * print node.parm('tx').eval()
 
-Set values on Parms more easily:
+### Set values on Parms more easily:
  * node.tx = 500
 
-Installation Instructions:
+## Installation Instructions:
     You will be able to use pip to install it (when I get around to it):
     pip install git://github.com/schworer/homport homport/
 
@@ -29,5 +29,5 @@ Installation Instructions:
         homport.bootstrap()
     or, import it directly in the Python pane within Houdini.
 
-I like unit tests, run them like so:
+### I like unit tests, run them like so:
     hython test.py
