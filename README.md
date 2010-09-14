@@ -30,4 +30,4 @@ Then, put this in your 123.py or 456.py Houdini startup script:
 or, import it directly in the Python pane within Houdini.
 
 ### I like unit tests, run them like so:
-    hython test.py
+    hython test_homport.py
