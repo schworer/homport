@@ -16,8 +16,8 @@ Homport makes it easier to interact with [Houdini](http://sidefx.com) nodes in P
     print node.tx
 
 ## Installation
-You will be able to use pip to install it (when I get around to it):
-    pip install git://github.com/schworer/homport homport/
+You can use [pip](http://pypi.python.org/pypi/pip) to install:
+    pip install -e git+git://github.com/schworer/homport.git@0.2#egg=homport
 
 If you don't want to use pip, clone the repo and add it to your path
 manually:
