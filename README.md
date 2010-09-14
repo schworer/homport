@@ -1,7 +1,6 @@
 # homport
 
-Homport is a helper module to make manipulating nodes with HOM easier in
-an interactive Python session
+Homport makes it easier to interact with [Houdini](http://sidefx.com) nodes in Python. Run it during interactive sessions to quickly wire up nodes, see the values of parameters, and more.
 
 ## Usage
 ### Connect nodes quickly:
