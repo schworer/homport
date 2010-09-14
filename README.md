@@ -15,7 +15,7 @@ Homport makes it easier to interact with [Houdini](http://sidefx.com) nodes in P
     # get values without calling eval()
     print node.tx
 
-## Installation Instructions:
+## Installation
 You will be able to use pip to install it (when I get around to it):
     pip install git://github.com/schworer/homport homport/
 
