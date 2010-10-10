@@ -42,7 +42,6 @@ class NodeWrapTestCase(unittest.TestCase):
         geo >> subnet.input_two
         self.assert_(subnet.inputConnectors()[1])
 
-
 class ParmWrapTestCase(unittest.TestCase):
     def setUp(self):
         self.geo1 = hou.node('/obj').createNode('geo')
