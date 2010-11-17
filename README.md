@@ -28,5 +28,6 @@ Then, put this in your 123.py or 456.py Houdini startup script:
     homport.bootstrap()
 or, import it directly in the Python pane within Houdini.
 
-### I like unit tests, run them like so:
+### Run the unit tests:
     hython test_homport.py
+
