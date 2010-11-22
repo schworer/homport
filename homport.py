@@ -5,10 +5,15 @@ interactive Python session.
 
 def start():
     """
-    Bootstrap the current session. `homport.start()` must be called before
-    running any homport-specific functions.
+    ### Launch Homport
 
-    __Warning:__ this monkey patches the `hou.node` method.
+    Bootstraps the current session. `homport.start()` must be called before
+    running any homport-specific functions. You may want to `import homport`
+    and run this method in a [startup script.][1]
+
+    __Warning:__ This monkey patches the `hou.node` method.
+
+    [1]: http://www.sidefx.com/docs/houdini11.0/hom/independent
     """
 
     # Import Houdini in this module. Ideally, `hou` should already be in
@@ -40,7 +45,7 @@ class NodeWrapError(Exception):
 
 class NodeWrap(object):
     """
-    Wraps a Houdini node and provides extra functionality.
+    Wraps a `hou.Node` and provides extra functionality.
     """
     def __init__(self, node):
         """
