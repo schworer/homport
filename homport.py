@@ -65,11 +65,11 @@ class NodeWrap(object):
         # you want to make connections to.
         self.input_index = 0
 
-    def createNode(self, name):
+    def createNode(self, name, *args, **kwargs):
         """
         Wraps the node created by hou.Node.createNode in a NodeWrap object.
         """
-        node = self.node.createNode(name)
+        node = self.node.createNode(name, *args, **kwargs)
         return NodeWrap(node)
 
     def __getattr__(self, name):
