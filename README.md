@@ -28,7 +28,7 @@ manually:
 
 Then, put this in your 123.py or 456.py Houdini startup script:
     import homport
-    homport.bootstrap()
+    homport.start()
 or, import it directly in the Python pane within Houdini.
 
 ### Run the unit tests:
