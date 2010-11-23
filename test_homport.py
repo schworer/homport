@@ -1,6 +1,6 @@
 import unittest
 import homport
-homport.bootstrap()
+homport.start()
 
 class NodeWrapTestCase(unittest.TestCase):
     def setUp(self):
