@@ -217,6 +217,45 @@ class ParmWrap(object):
         # Store a reference to the original `hou.Parm` object.
         self.parm = parm
 
+    def connect_parms(self, from_parm, to_parm):
+        """
+        Creates a reference between `from_parm` to `to_parm`. This method is
+        used by `__lshift__` and `__rshift__` to enable quick referencing of
+        `hou.Parm` objects.
+        """
+        from_node = from_parm.node()
+        to_node = to_parm.node()
+
+        # All references are relative, this way when creating __HDAs__ you can
+        # easily reference internal parameters without hard coding the parent
+        # node's name.
+        rel_path = to_node.relativePathTo(from_node)
+        rel_path = rel_path + '/' + from_parm.name()
+
+        # The expression function that gets called to evaluate the reference is
+        # different based on the target parameter's type:
+        #
+        # -  `ch()` for floats, ints
+        # -  `chs()` for generic strings
+        # -  `chsop()` for node paths
+        parm_template = to_parm.parmTemplate()
+        if parm_template.type().name() == 'String':
+            if parm_template.stringType().name() == 'NodeReference':
+                expr_func = 'chsop'
+            else:
+                expr_func = 'chs'
+        else:
+            expr_func = 'ch'
+
+        rel_reference = '%s("%s")' % (expr_func, rel_path)
+
+        # If the expression is for `chs()` or `chsop()`, it needs to be wrapped
+        # with backticks: `` `chsop("foo")` ``
+        if expr_func.startswith('chs'):
+            rel_reference = '`' + rel_reference + '`'
+
+        to_parm.setExpression(rel_reference)
+
     def __rshift__(self, object):
         """
         Uses the `>>` operator to create a reference from `hou.Parm` on the
@@ -226,24 +265,9 @@ class ParmWrap(object):
 
         is the same as calling: `sphere.parm('ty').setExpression('ch("tx")')`
         """
-        cur_node = self.parm.node()
-        to_node = object.node()
-        rel_path = cur_node.relativePathTo(to_node)
-
-        # Properly set `expr_func` to one of either:
-        #
-        # -  `ch()` for floats, ints
-        # -  `chs()` for generic strings
-        # -  `chsop()` for node paths
-        if isNodeReferenceParm(self.parm):
-            expr_func = 'chsop'
-        elif self.parm.parmTemplate.type().name() == 'String':
-            expr_func = 'chs':
-        else:
-            expr_func = 'ch'
-
-        rel_reference = '%s(%s)' % (expr_func, rel_path)
-        self.parm.setExpression(rel_reference)
+        from_parm = self.parm
+        to_parm = object
+        self.connect_parms(from_parm, to_parm)
 
     def __lshift__(self, object):
         """
@@ -254,11 +278,14 @@ class ParmWrap(object):
 
         is the same as calling: `sphere.parm('tx').setExpression('ch("ty")')`
         """
-        pass
+        from_parm = object
+        to_parm = self.parm
+        self.connect_parms(from_parm, to_parm)
 
     def __getattr__(self, name):
         """
-        Gets the attributes of the wrapped parameter.
+        Gets the attributes of the wrapped parameter. This allows expressions
+        like `node.tx.name()` to work.
         """
 
         if name in dir(self.parm):
@@ -267,8 +294,18 @@ class ParmWrap(object):
             msg = 'ParmWrap object has no attribute %s' % name
             raise AttributeError(msg)
 
+    def __repr__(self):
+        """
+        Returns a readable representation of the parm.
+        Example: `<Node /obj of type obj>`
+        """
+        return "<Parm %s of type %s>" % (self.parm.path(),
+                                         self.parm.parmTemplate().type().name())
+
     def __str__(self):
         """
+        Returns the value of the parameter instead of the object reference.
+        Thus, typing `print node.tx` will return the value of the `hou.Parm`.
         """
         return str(self.parm.eval())
 
