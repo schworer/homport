@@ -207,27 +207,52 @@ class NodeWrap(object):
 
 class ParmWrap(object):
     """
-    TODO document
+    Wraps a `hou.Parm` object and provides extra functionality.
     """
     def __init__(self, parm):
         """
-        TODO document
+        Initializes a `ParmWrap` object.
         """
+
+        # Store a reference to the original `hou.Parm` object.
         self.parm = parm
 
     def __rshift__(self, object):
         """
-        node.tx >> node2.ty
+        Uses the `>>` operator to create a reference from `hou.Parm` on the
+        left side of the operator to the `hou.Parm` on the right.
+        Example:
+            sphere.tx >> sphere.ty
+
+        is the same as calling: `sphere.parm('ty').setExpression('ch("tx")')`
         """
         cur_node = self.parm.node()
         to_node = object.node()
         rel_path = cur_node.relativePathTo(to_node)
-        rel_reference = 'ch(%s)' % rel_path
+
+        # Properly set `expr_func` to one of either:
+        #
+        # -  `ch()` for floats, ints
+        # -  `chs()` for generic strings
+        # -  `chsop()` for node paths
+        if isNodeReferenceParm(self.parm):
+            expr_func = 'chsop'
+        elif self.parm.parmTemplate.type().name() == 'String':
+            expr_func = 'chs':
+        else:
+            expr_func = 'ch'
+
+        rel_reference = '%s(%s)' % (expr_func, rel_path)
         self.parm.setExpression(rel_reference)
 
     def __lshift__(self, object):
         """
-        node.ty << node2.tx
+        Uses the `<<` operator to create a reference from `hou.Parm` on the
+        right side of the operator to the `hou.Parm` on the left.
+        Example:
+            sphere.tx << sphere.ty
+
+        is the same as calling: `sphere.parm('tx').setExpression('ch("ty")')`
         """
         pass
 
