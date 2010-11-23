@@ -1,6 +1,8 @@
 """
-Homport is a helper module to make manipulating nodes with HOM easier in an
-interactive Python session.
+Homport is a helper module to make manipulating nodes with [__HOM__][1] easier
+in an interactive Python session.
+
+[1]: http://www.sidefx.com/docs/houdini11.0/hom
 """
 
 def start():
@@ -84,7 +86,7 @@ class NodeWrap(object):
         # This is a special case for handling arbitrary inputs on the node.
         # This will usually be invoked in an expression like:
         #   `geo >> sphere.input_two`
-        # When `sphere.input_two` gets called, set `input_index = 2` on
+        # When `sphere.input_two` gets called, we set `input_index = 2` on
         # `sphere` and return it.
         inputs = ('input_one', 'input_two', 'input_three', 'input_four')
         if name in inputs:
@@ -108,17 +110,16 @@ class NodeWrap(object):
         if parm:
             found_attrs.append(ParmWrap(parm))
 
-
         # We can't find the name that was given in the places we looked, raise
         # an `AttributeError`.
         if len(found_attrs) == 0:
-            msg = "Node object has no, parm, python attr or child Node " \
-                  "called %s" % name
+            msg = "Node object has no hou.Parm, attr or child hou.Node " \
+                  "called '%s'" % name
             raise AttributeError(msg)
 
         # Likewise, if we found more than one match for the given name, raise
         # an `AttributeError`.
-        if len(attribs) > 1:
+        if len(found_attrs) > 1:
             msg = "%s is an ambiguous name, it could be one of %s" \
                 % (name, found_attrs)
             raise AttributeError(msg)
