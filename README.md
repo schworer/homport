@@ -15,6 +15,9 @@ Homport makes it easier to interact with [Houdini](http://sidefx.com) nodes in P
     # get values without calling eval()
     print node.tx
 
+## Documentation
+Documentation is done using pycco -- check it out [here](http://schworer.github.com/homport/docs/homport.html)
+
 ## Installation
 You can use [pip](http://pypi.python.org/pypi/pip) to install:
     pip install -e git+git://github.com/schworer/homport.git@0.2#egg=homport
