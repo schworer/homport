@@ -45,6 +45,16 @@ class NodeWrapTestCase(unittest.TestCase):
         geo >> subnet.input_two
         self.assert_(subnet.inputConnectors()[1])
 
+    def testInputConnectReset(self):
+        geo = hou.node('/obj').createNode('geo')
+        subnet = hou.node('/obj').createNode('subnet')
+        geo >> subnet.input_two
+        self.assert_(subnet.inputConnectors()[1])
+
+        # this should properly connect geo to input 0 of the subnet
+        geo >> subnet
+        self.assert_(subnet.inputConnectors()[0])
+
 class ParmWrapTestCase(unittest.TestCase):
     def setUp(self):
         self.geo1 = hou.node('/obj').createNode('geo')
