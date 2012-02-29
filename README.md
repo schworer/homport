@@ -4,16 +4,26 @@ Homport makes it easier to interact with [Houdini](http://sidefx.com) nodes in P
 
 ## Usage
 ### Connect nodes quickly:
-    # connects output of 'node' to first input of 'node2'
-    node >> node2
-    # connects output of 'node' to the second input of 'node2'
-    node >> node2.input_two
+```python
+# connects output of 'node' to first input of 'node2'
+node >> node2
+# connects output of 'node' to the second input of 'node2'
+node >> node2.input_two
+```
 
 ### Deal with parameters more easily:
-    # set parameters using assignment
-    node.tx = 500
-    # get values without calling eval()
-    print node.tx
+```python
+# set parameters using assignment
+node.tx = 500
+# get values without calling eval()
+print node.tx
+```
+
+### Link parameters together:
+```python
+# connect `ty` of nodeA to `tz` of nodeB
+nodeA.ty >> nodeB.tz
+```
 
 ## Documentation
 Documentation is done using pycco -- check it out [here](http://schworer.github.com/homport/docs/homport.html)
@@ -30,8 +40,10 @@ manually:
 
 Then, put this in your 123.py or 456.py Houdini startup script:
 
-    import homport
-    homport.start()
+```python
+import homport
+homport.start()
+```
 
 or, import it directly in the Python pane within Houdini.
 
