@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Homport by schworer</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Homport</h1>
+        <p>Interact with Houdini more easily</p>
+        <p class="view"><a href="https://github.com/schworer/homport">View the Project on GitHub <small>schworer/homport</small></a></p>
+        <ul>
+          <li><a href="https://github.com/schworer/homport/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/schworer/homport/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/schworer/homport">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>homport</h1>
+
+<p>Homport makes it easier to interact with <a href="http://sidefx.com">Houdini</a> nodes in Python. Run it during interactive sessions to quickly wire up nodes, see the values of parameters, and more.</p>
+
+<h2>Usage</h2>
+
+<h3>Connect nodes quickly:</h3>
+
+<div class="highlight">
+<pre><span class="c"># connects output of 'node' to first input of 'node2'</span>
+<span class="n">node</span> <span class="o">&gt;&gt;</span> <span class="n">node2</span>
+<span class="c"># connects output of 'node' to the second input of 'node2'</span>
+<span class="n">node</span> <span class="o">&gt;&gt;</span> <span class="n">node2</span><span class="o">.</span><span class="n">input_two</span>
+</pre>
+</div>
+
+
+<h3>Deal with parameters more easily:</h3>
+
+<div class="highlight">
+<pre><span class="c"># set parameters using assignment</span>
+<span class="n">node</span><span class="o">.</span><span class="n">tx</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="c"># get values without calling eval()</span>
+<span class="k">print</span> <span class="n">node</span><span class="o">.</span><span class="n">tx</span>
+</pre>
+</div>
+
+
+<h3>Link parameters together:</h3>
+
+<div class="highlight">
+<pre><span class="c"># connect `ty` of nodeA to `tz` of nodeB</span>
+<span class="n">nodeA</span><span class="o">.</span><span class="n">ty</span> <span class="o">&gt;&gt;</span> <span class="n">nodeB</span><span class="o">.</span><span class="n">tz</span>
+</pre>
+</div>
+
+
+<h2>Documentation</h2>
+
+<p>Documentation is done using pycco -- check it out <a href="http://schworer.github.com/homport/docs/homport.html">here</a></p>
+
+<h2>Installation</h2>
+
+<p>You can use <a href="http://pypi.python.org/pypi/pip">pip</a> to install:</p>
+
+<pre><code>pip install -e git+git://github.com/schworer/homport.git@0.2#egg=homport
+</code></pre>
+
+<p>If you don't want to use pip, clone the repo and add it to your path
+manually:</p>
+
+<pre><code>git clone git://github.com/schworer/homport homport/
+</code></pre>
+
+<p>Then, put this in your 123.py or 456.py Houdini startup script:</p>
+
+<div class="highlight">
+<pre><span class="kn">import</span> <span class="nn">homport</span>
+<span class="n">homport</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre>
+</div>
+
+
+<p>or, import it directly in the Python pane within Houdini.</p>
+
+<h3>Run the unit tests:</h3>
+
+<pre><code>hython test_homport.py
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/schworer">schworer</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
