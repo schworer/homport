@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>homport.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  
+  <table cellspacing=0 cellpadding=0>
+  <thead>
+    <tr>
+      <th class=docs><h1>homport.py</h1></th>
+      <th class=code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='section-0'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-0">#</a>
+        </div>
+        <p>Homport is a helper module to make manipulating nodes with <a href="http://www.sidefx.com/docs/houdini11.0/hom"><strong>HOM</strong></a> easier
+in an interactive Python session.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-1'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-1">#</a>
+        </div>
+        <h3>Launch Homport</h3>
+<p>Bootstraps the current session. <code>homport.start()</code> must be called before
+running any homport-specific functions. You may want to <code>import homport</code>
+and run this method in a <a href="http://www.sidefx.com/docs/houdini11.0/hom/independent">startup script.</a></p>
+<p><strong>Warning:</strong> This monkey patches the <code>hou.node</code> method.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre><span class="k">def</span> <span class="nf">start</span><span class="p">():</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-2'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-2">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-3'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-3">#</a>
+        </div>
+        <p>Import Houdini in this module. Ideally, <code>hou</code> should already be in
+globals, as <code>homport</code> is meant to be run inside a Houdini session.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;hou&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">():</span>
+        <span class="kn">import</span> <span class="nn">hou</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-4'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-4">#</a>
+        </div>
+        <p>Move the original <code>hou.node</code> function out of the way, we'll call it later.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="n">hou</span><span class="o">.</span><span class="n">__node</span> <span class="o">=</span> <span class="n">hou</span><span class="o">.</span><span class="n">node</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-5'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-5">#</a>
+        </div>
+        <p>This function is used to monkey patch the <code>hou.node</code> method in order to
+make the <code>homport</code> module transparent to users.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">_wrap_node</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-6'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-6">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-7'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-7">#</a>
+        </div>
+        <p>Call the original, stashed <code>hou.node</code> function, then wrap it with
+<code>NodeWrap</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">node</span> <span class="o">=</span> <span class="n">hou</span><span class="o">.</span><span class="n">__node</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">NodeWrap</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-8'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-8">#</a>
+        </div>
+        <p>We could use the <code>@functools.wraps</code> decorator here, but this will do fine.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="n">_wrap_node</span><span class="o">.</span><span class="n">func_name</span> <span class="o">=</span> <span class="s">&#39;node&#39;</span>
+    <span class="n">_wrap_node</span><span class="o">.</span><span class="n">func_doc</span> <span class="o">=</span> <span class="n">hou</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">func_doc</span>
+    <span class="n">hou</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">_wrap_node</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-9'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-9">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre><span class="k">class</span> <span class="nc">NodeWrapError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-10'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-10">#</a>
+        </div>
+        <p>Wraps a <code>hou.Node</code> and provides extra functionality.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre><span class="k">class</span> <span class="nc">NodeWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-11'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-11">#</a>
+        </div>
+        <p>Initializes a <code>NodeWrap</code> object. You should not need to initialize this
+directly. Once <code>homport.start()</code> gets called, every node that gets
+returned will be wrapped by <code>NodeWrap</code>.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-12'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-12">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="ow">not</span> <span class="n">node</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NodeWrapError</span><span class="p">(</span><span class="s">&#39;Invalid node given.&#39;</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-13'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-13">#</a>
+        </div>
+        <p>Store a reference to the HOM node.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-14'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-14">#</a>
+        </div>
+        <p>Prime the <code>input_index</code>. This gets used later to specify which input
+you want to make connections to.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">input_index</span> <span class="o">=</span> <span class="mi">0</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-15'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-15">#</a>
+        </div>
+        <p>Wraps the node created by hou.Node.createNode in a NodeWrap object.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">createNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-16'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-16">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">createNode</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">NodeWrap</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-17'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-17">#</a>
+        </div>
+        <p>Easily get the children or parameters of the node without calling
+extra methods on the node. A useful convenience function.
+Examples:
+<pre>node = hou.node('/obj')
+node.geo1 # will return hou.node('/obj/geo1')
+node.tx # will return node.parm('tx')
+node.createNode # will return the bound method on node</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-18'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-18">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-19'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-19">#</a>
+        </div>
+        <p>This is a special case for handling arbitrary inputs on the node.
+This will usually be invoked in an expression like:
+  <code>geo &gt;&gt; sphere.input_two</code>
+When <code>sphere.input_two</code> gets called, set <code>input_index = 2</code> on
+<code>sphere</code> and return it.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;input_one&#39;</span><span class="p">,</span> <span class="s">&#39;input_two&#39;</span><span class="p">,</span> <span class="s">&#39;input_three&#39;</span><span class="p">,</span> <span class="s">&#39;input_four&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_index</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="n">found_attrs</span> <span class="o">=</span> <span class="p">[]</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-20'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-20">#</a>
+        </div>
+        <p>If the attr we're looking for is on the hou.Node object, grab it.
+We'll put it in a list of <code>found_attrs</code> that will be used later.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="n">found_attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-21'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-21">#</a>
+        </div>
+        <p>The attr could be the name of a child <code>hou.Node</code> under <code>self.node</code>.
+If we find one, store it in <code>found_attrs</code>.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">childNode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">childNode</span><span class="p">:</span>
+            <span class="n">found_attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NodeWrap</span><span class="p">(</span><span class="n">childNode</span><span class="p">))</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-22'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-22">#</a>
+        </div>
+        <p>If the name we're looking for is a <code>hou.Parm</code>, store it as well.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">parm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">parm</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parm</span><span class="p">:</span>
+            <span class="n">found_attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ParmWrap</span><span class="p">(</span><span class="n">parm</span><span class="p">))</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-23'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-23">#</a>
+        </div>
+        <p>We can't find the name that was given in the places we looked, raise
+an <code>AttributeError</code>.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_attrs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Node object has no hou.Parm, attr or child hou.Node &quot;</span> \
+                  <span class="s">&quot;called &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-24'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-24">#</a>
+        </div>
+        <p>Likewise, if we found more than one match for the given name, raise
+an <code>AttributeError</code>.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_attrs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> is an ambiguous name, it could be one of </span><span class="si">%s</span><span class="s">&quot;</span> \
+                <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">found_attrs</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">found_attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-25'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-25">#</a>
+        </div>
+        <p></pre>This implementation of setattr enables setting of parameters using the
+<code>=</code> operator. Usually, you'd set a parm value like this:
+<pre><code>node.parm('tx').set(50)</code>
+</pre>
+With this implementation, we can do this: <code>node.tx = 50</code></p>
+<p><strong>Warning:</strong> this only works when the attr in question is a <code>ParmWrap</code>
+object on a <code>NodeWrap</code> object and not a standalone <code>hou.Parm</code> or
+<code>ParmWrap</code> object.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-26'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-26">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;node&#39;</span><span class="p">,</span> <span class="s">&#39;input_index&#39;</span><span class="p">):</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">ParmWrap</span><span class="p">):</span>
+                <span class="n">attr</span><span class="o">.</span><span class="n">parm</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-27'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-27">#</a>
+        </div>
+        <p>Uses the <code>&gt;&gt;</code> operator to connect the left side's <strong>output</strong> to the
+right side's <strong>input</strong>.
+Example:
+<pre>camera &gt;&gt; sphere
+</pre>
+is the same as calling: <code>sphere.setInput('0', camera)</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-28'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-28">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">NodeWrap</span><span class="p">):</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="nb">object</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">NodeWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">NodeWrapError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NodeWrapError</span>
+        <span class="n">node</span><span class="o">.</span><span class="n">setInput</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-29'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-29">#</a>
+        </div>
+        <p>Uses the <code>&lt;&lt;</code> operator to connect the left side's <strong>input</strong> to the
+right side's <strong>output</strong>.
+Example:
+<pre>camera &lt;&lt; sphere
+</pre>
+is the same as calling: <code>camera.setInput('0', sphere)</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__lshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-30'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-30">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">NodeWrap</span><span class="p">):</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="nb">object</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">NodeWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">NodeWrapError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NodeWrapError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">setInput</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_index</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">node</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-31'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-31">#</a>
+        </div>
+        <p>Disconnects <code>self</code> from <code>object</code>. Example:
+<pre>camera // sphere</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__floordiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-32'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-32">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">node</span> <span class="o">=</span> <span class="nb">object</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-33'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-33">#</a>
+        </div>
+        <p>Ensure the given node is connected to <code>self</code> before trying to
+disconnect.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">conn</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">inputConnections</span><span class="p">()[</span><span class="n">node</span><span class="o">.</span><span class="n">input_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">conn</span><span class="o">.</span><span class="n">inputNode</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NodeWrapError</span><span class="p">(</span><span class="s">&#39;Input node is incorrect&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">setInput</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">input_index</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-34'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-34">#</a>
+        </div>
+        <p></pre>Returns a readable representation of the node, supplying its
+path and <code>NodeType</code>. Example: <code>&lt;Node /obj of type obj&gt;</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-35'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-35">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">return</span> <span class="s">&quot;&lt;Node </span><span class="si">%s</span><span class="s"> of type </span><span class="si">%s</span><span class="s">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">path</span><span class="p">(),</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">type</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">())</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-36'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-36">#</a>
+        </div>
+        <p>Wraps a <code>hou.Parm</code> object and provides extra functionality.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre><span class="k">class</span> <span class="nc">ParmWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-37'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-37">#</a>
+        </div>
+        <p>Initializes a <code>ParmWrap</code> object.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parm</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-38'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-38">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-39'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-39">#</a>
+        </div>
+        <p>Store a reference to the original <code>hou.Parm</code> object.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">parm</span> <span class="o">=</span> <span class="n">parm</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-40'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-40">#</a>
+        </div>
+        <p>Creates a reference between <code>from_parm</code> to <code>to_parm</code>. This method is
+used by <code>__lshift__</code> and <code>__rshift__</code> to enable quick referencing of
+<code>hou.Parm</code> objects.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">connect_parms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_parm</span><span class="p">,</span> <span class="n">to_parm</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-41'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-41">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">from_node</span> <span class="o">=</span> <span class="n">from_parm</span><span class="o">.</span><span class="n">node</span><span class="p">()</span>
+        <span class="n">to_node</span> <span class="o">=</span> <span class="n">to_parm</span><span class="o">.</span><span class="n">node</span><span class="p">()</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-42'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-42">#</a>
+        </div>
+        <p>All references are relative, this way when creating <strong>HDAs</strong> you can
+easily reference internal parameters without hard coding the parent
+node's name.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">rel_path</span> <span class="o">=</span> <span class="n">to_node</span><span class="o">.</span><span class="n">relativePathTo</span><span class="p">(</span><span class="n">from_node</span><span class="p">)</span>
+        <span class="n">rel_path</span> <span class="o">=</span> <span class="n">rel_path</span> <span class="o">+</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">from_parm</span><span class="o">.</span><span class="n">name</span><span class="p">()</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-43'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-43">#</a>
+        </div>
+        <p>The expression function that gets called to evaluate the reference is
+different based on the target parameter's type:</p>
+<ul>
+<li><code>ch()</code> for floats, ints</li>
+<li><code>chs()</code> for generic strings</li>
+<li><code>chsop()</code> for node paths</li>
+</ul>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">parm_template</span> <span class="o">=</span> <span class="n">to_parm</span><span class="o">.</span><span class="n">parmTemplate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">parm_template</span><span class="o">.</span><span class="n">type</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;String&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parm_template</span><span class="o">.</span><span class="n">stringType</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;NodeReference&#39;</span><span class="p">:</span>
+                <span class="n">expr_func</span> <span class="o">=</span> <span class="s">&#39;chsop&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">expr_func</span> <span class="o">=</span> <span class="s">&#39;chs&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">expr_func</span> <span class="o">=</span> <span class="s">&#39;ch&#39;</span>
+
+        <span class="n">rel_reference</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">(&quot;</span><span class="si">%s</span><span class="s">&quot;)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">expr_func</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-44'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-44">#</a>
+        </div>
+        <p>If the expression is for <code>chs()</code> or <code>chsop()</code>, it needs to be wrapped
+with backticks: <code>`chsop("foo")`</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="n">expr_func</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;chs&#39;</span><span class="p">):</span>
+            <span class="n">rel_reference</span> <span class="o">=</span> <span class="s">&#39;`&#39;</span> <span class="o">+</span> <span class="n">rel_reference</span> <span class="o">+</span> <span class="s">&#39;`&#39;</span>
+
+        <span class="n">to_parm</span><span class="o">.</span><span class="n">setExpression</span><span class="p">(</span><span class="n">rel_reference</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-45'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-45">#</a>
+        </div>
+        <p>Uses the <code>&gt;&gt;</code> operator to create a reference from <code>hou.Parm</code> on the
+left side of the operator to the <code>hou.Parm</code> on the right.
+Example:
+<pre>sphere.tx &gt;&gt; sphere.ty
+</pre>
+is the same as calling: <code>sphere.parm('ty').setExpression('ch("tx")')</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__rshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-46'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-46">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">from_parm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parm</span>
+        <span class="n">to_parm</span> <span class="o">=</span> <span class="nb">object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_parms</span><span class="p">(</span><span class="n">from_parm</span><span class="p">,</span> <span class="n">to_parm</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-47'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-47">#</a>
+        </div>
+        <p>Uses the <code>&lt;&lt;</code> operator to create a reference from <code>hou.Parm</code> on the
+right side of the operator to the <code>hou.Parm</code> on the left.
+Example:
+<pre>sphere.tx &lt;&lt; sphere.ty
+</pre>
+is the same as calling: <code>sphere.parm('tx').setExpression('ch("ty")')</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__lshift__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-48'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-48">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="n">from_parm</span> <span class="o">=</span> <span class="nb">object</span>
+        <span class="n">to_parm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_parms</span><span class="p">(</span><span class="n">from_parm</span><span class="p">,</span> <span class="n">to_parm</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-49'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-49">#</a>
+        </div>
+        <p>Gets the attributes of the wrapped parameter. This allows expressions
+like <code>node.tx.name()</code> to work.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-50'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-50">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parm</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parm</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;ParmWrap object has no attribute </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-51'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-51">#</a>
+        </div>
+        <p>Returns a readable representation of the parm.
+Example: <code>&lt;Node /obj of type obj&gt;</code></p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-52'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-52">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">return</span> <span class="s">&quot;&lt;Parm </span><span class="si">%s</span><span class="s"> of type </span><span class="si">%s</span><span class="s">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parm</span><span class="o">.</span><span class="n">path</span><span class="p">(),</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">parm</span><span class="o">.</span><span class="n">parmTemplate</span><span class="p">()</span><span class="o">.</span><span class="n">type</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">())</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-53'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-53">#</a>
+        </div>
+        <p>Returns the value of the parameter instead of the object reference.
+Thus, typing <code>print node.tx</code> will return the value of the <code>hou.Parm</code>.</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></div></pre></div>
+      </td>
+    </tr><tr id='section-54'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-54">#</a>
+        </div>
+        
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><div class="highlight"><pre>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parm</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+</pre></div></pre></div>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
